@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 1.4.1 - 2026-06-06
+
++ [Fix] Responses image generation honors `tools[].model` when present.
+
 ## 1.4.0 - 2026-05-31
 
 + [新增] 新增AI生成可编辑PSD文件逆向。

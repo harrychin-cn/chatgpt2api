@@ -57,6 +57,14 @@ def response_image_tool(body: dict[str, Any]) -> dict[str, object]:
     return {}
 
 
+def response_image_model(body: dict[str, Any], tool: dict[str, object] | None = None) -> str:
+    tool = tool if tool is not None else response_image_tool(body)
+    tool_model = str((tool or {}).get("model") or "").strip()
+    if tool_model:
+        return tool_model
+    return str(body.get("model") or "gpt-image-2").strip() or "gpt-image-2"
+
+
 def extract_response_image(input_value: object) -> tuple[bytes, str] | None:
     if isinstance(input_value, dict):
         if str(input_value.get("type") or "").strip() == "input_image":
@@ -329,7 +337,8 @@ def response_events(body: dict[str, Any]) -> Iterator[dict[str, Any]]:
     prompt = extract_response_prompt(body.get("input"))
     if not prompt:
         raise HTTPException(status_code=400, detail={"error": "input text is required"})
-    model = str(body.get("model") or "gpt-image-2").strip() or "gpt-image-2"
+    tool = response_image_tool(body)
+    model = response_image_model(body, tool)
     image_info = extract_response_image(body.get("input"))
     if image_info:
         image_data, mime_type = image_info
@@ -337,7 +346,6 @@ def response_events(body: dict[str, Any]) -> Iterator[dict[str, Any]]:
     else:
         images = None
     input_image_tokens = count_image_content_tokens(_input_image_parts(body.get("input")), model)
-    tool = response_image_tool(body)
     image_outputs = stream_image_outputs_with_pool(ConversationRequest(
         prompt=prompt,
         model=model,

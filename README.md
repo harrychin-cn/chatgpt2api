@@ -300,7 +300,8 @@ curl http://localhost:8000/v1/responses \
     "input": "生成一张未来感城市天际线图片",
     "tools": [
       {
-        "type": "image_generation"
+        "type": "image_generation",
+        "model": "gpt-image-2"
       }
     ]
   }'
@@ -314,7 +315,7 @@ curl http://localhost:8000/v1/responses \
 |:---------|:------------------------------|
 | `model`  | 响应中会回显该模型字段，但图片生成当前仍走图片生成兼容逻辑 |
 | `input`  | 输入内容，需要能解析出图片生成提示词            |
-| `tools`  | 必须包含 `image_generation` 工具请求  |
+| `tools`  | 必须包含 `image_generation` 工具请求，建议显式设置 `tools[].model` |
 | `stream` | 已实现，但仍在测试                     |
 
 <br>
